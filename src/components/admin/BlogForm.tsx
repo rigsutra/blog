@@ -237,19 +237,19 @@ export default function BlogForm({ initialData }: BlogFormProps) {
   return (
     <div className="max-w-5xl mx-auto">
       {/* ── Header ─────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+      <div className="mb-6">
+        {/* Row 1: back + title + status */}
+        <div className="flex items-center gap-3 mb-3">
           <button
             onClick={() => router.back()}
-            className="p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
               {isEdit ? "Edit Post" : "New Post"}
             </h1>
-            {/* Status line */}
             <p className="text-xs mt-0.5 flex items-center gap-1.5">
               {isUploading ? (
                 <>
@@ -275,14 +275,15 @@ export default function BlogForm({ initialData }: BlogFormProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Row 2: action buttons — full width on mobile, right-aligned on desktop */}
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Preview toggle */}
           <button
             onClick={() => setPreview(!preview)}
             className="flex items-center gap-1.5 text-sm px-3 py-2 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <Eye className="w-4 h-4" />
-            {preview ? "Edit" : "Preview"}
+            <span className="hidden xs:inline">{preview ? "Edit" : "Preview"}</span>
           </button>
 
           {/* Save Draft */}
@@ -292,7 +293,7 @@ export default function BlogForm({ initialData }: BlogFormProps) {
             className="flex items-center gap-1.5 text-sm px-3 py-2 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            Save Draft
+            <span>Save Draft</span>
           </button>
 
           {/* Publish — stays in loading until images are uploaded AND API call completes */}
@@ -304,17 +305,17 @@ export default function BlogForm({ initialData }: BlogFormProps) {
                 ? `Waiting for ${activeUploads} image upload${activeUploads > 1 ? "s" : ""} to finish…`
                 : undefined
             }
-            className="flex items-center gap-1.5 text-sm px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-70 disabled:cursor-wait font-medium min-w-[110px] justify-center"
+            className="flex items-center gap-1.5 text-sm px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-70 disabled:cursor-wait font-medium min-w-[100px] justify-center ml-auto"
           >
             {publishBusy ? (
               <>
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                {publishLabel}
+                <span className="hidden sm:inline">{publishLabel}</span>
               </>
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                Publish
+                <span>Publish</span>
               </>
             )}
           </button>

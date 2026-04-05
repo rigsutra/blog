@@ -15,14 +15,14 @@ npm install
 ```bash
 cp .env.example .env
 ```
-Edit `.env` and set a strong `SESSION_SECRET` (at least 32 random characters).
+Edit `.env` and fill in your values (see [Environment Variables](#environment-variables) below).
 
 ### 3. Initialize the database
 ```bash
 npm run db:push
 ```
 
-### 4. Seed the database (creates admin user + sample data)
+### 4. Seed the database
 ```bash
 npm run db:seed
 ```
@@ -36,15 +36,17 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## Admin Panel
+## Environment Variables
 
-URL: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
+| Variable | Purpose | Example |
+|---|---|---|
+| `DATABASE_URL` | SQLite file path for Prisma | `file:./dev.db` |
+| `SESSION_SECRET` | 32+ char secret for session encryption | *(generate a random string)* |
+| `NEXT_PUBLIC_SITE_URL` | Public base URL (sitemap, OG tags) | `http://localhost:3000` |
+| `NEXT_PUBLIC_SITE_NAME` | Site name shown in navbar, footer, meta | `My Blog` |
+| `NEXT_PUBLIC_SITE_DESCRIPTION` | Site description for meta/OG tags | `A modern blog platform` |
 
-Default credentials:
-- **Username:** `admin`
-- **Password:** `admin123`
-
-> **Change the password after first login** (via Prisma Studio or a custom settings page).
+> Never commit your `.env` file. Use `.env.example` as a template.
 
 ---
 
@@ -72,8 +74,8 @@ src/
 │   │   ├── blog/[slug]/   # Blog detail page
 │   │   ├── about/         # About page
 │   │   └── contact/       # Contact page
-│   ├── admin/             # Admin panel
-│   │   ├── login/         # Admin login
+│   ├── admin/             # Admin panel (protected)
+│   │   ├── login/         # Login page
 │   │   ├── dashboard/     # Dashboard with stats
 │   │   ├── blogs/         # Blog management
 │   │   └── categories/    # Category management
@@ -128,15 +130,14 @@ public/
 - Fully responsive
 
 ### Admin Panel
-- Secure session-based login (bcrypt password hashing + iron-session)
+- Secure session-based authentication (bcrypt + iron-session)
 - Dashboard with stats (total posts, published, drafts, categories)
 - Blog list with search, status filter, and pagination
-- Create/Edit blogs with TipTap rich text editor
+- Create/edit blogs with TipTap rich text editor
 - Auto-save drafts every 5 seconds
-- Preview mode before publishing
 - Draft / Publish toggle
 - Slug auto-generation from title
-- Cover image upload (local) or URL paste
+- Cover image upload or URL paste
 - Category management (CRUD)
 - Delete with confirmation
 
@@ -155,7 +156,7 @@ Toolbar includes:
 
 ### Security
 - Passwords hashed with bcrypt (12 rounds)
-- Session encrypted via iron-session
+- Sessions encrypted via iron-session
 - Middleware protects all `/admin/*` routes
 - HTML content sanitized with sanitize-html before storage
 - File uploads validated (type + size limit: 5MB)
@@ -195,28 +196,6 @@ model Blog {
   updatedAt   DateTime  @updatedAt
   publishedAt DateTime?
 }
-```
-
----
-
-## Creating a New Admin User
-
-Open Prisma Studio:
-```bash
-npm run db:studio
-```
-
-Or run a seed script update:
-```ts
-// In prisma/seed.ts, add another upsert:
-await prisma.adminUser.upsert({
-  where: { username: "newadmin" },
-  update: {},
-  create: {
-    username: "newadmin",
-    passwordHash: await bcrypt.hash("newpassword", 12),
-  },
-});
 ```
 
 ---

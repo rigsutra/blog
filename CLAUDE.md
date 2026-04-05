@@ -29,7 +29,7 @@ npm run dev            # start dev server at http://localhost:3000
 ```
 
 **Admin login:** http://localhost:3000/admin/login  
-**Credentials:** `admin` / `admin123`
+**Credentials:** set via `prisma/seed.ts` (see seed file for current values)
 
 ---
 
@@ -575,6 +575,7 @@ Wraps all public pages with `<Navbar>` + `<Footer>`.
 - `updateUrl(newSearch, newCategory)` — memoized with `useCallback`; builds URLSearchParams and calls `router.push`
 - **Debounce:** 400ms timeout on search input changes before URL update
 - `clearSearch()` — resets search and updates URL
+- **Layout:** both controls centered (`justify-center`); search is `w-[180px]`, category is `w-[240px]` (search = 3/4 of category width); full-width on mobile
 
 ---
 

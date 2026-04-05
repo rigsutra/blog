@@ -53,19 +53,20 @@ export default async function DashboardPage() {
     <AdminLayout>
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-start justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
               Welcome back! Here&apos;s your blog overview.
             </p>
           </div>
           <Link
             href="/admin/blogs/new"
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
-            New Post
+            <span className="hidden sm:inline">New Post</span>
+            <span className="sm:hidden">New</span>
           </Link>
         </div>
 
@@ -104,13 +105,13 @@ export default async function DashboardPage() {
               </div>
             ) : (
               recentBlogs.map((blog) => (
-                <div key={blog.id} className="flex items-center justify-between px-6 py-4">
+                <div key={blog.id} className="flex items-center justify-between px-4 sm:px-6 py-4 gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-gray-900 dark:text-white truncate text-sm">
                       {blog.title}
                     </p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
                         blog.status === "published"
                           ? "bg-green-50 dark:bg-green-950/50 text-green-600 dark:text-green-400"
                           : "bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400"
@@ -118,17 +119,17 @@ export default async function DashboardPage() {
                         {blog.status}
                       </span>
                       {blog.category && (
-                        <span className="text-xs text-gray-400 dark:text-gray-500">{blog.category.name}</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline truncate">{blog.category.name}</span>
                       )}
-                      <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(blog.updatedAt)}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">{formatDate(blog.updatedAt)}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 ml-4">
+                  <div className="flex items-center gap-2 shrink-0">
                     <Link href={`/admin/blogs/${blog.id}/edit`} className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
                       Edit
                     </Link>
                     {blog.status === "published" && (
-                      <Link href={`/blog/${blog.slug}`} target="_blank" className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+                      <Link href={`/blog/${blog.slug}`} target="_blank" className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hidden sm:inline">
                         View
                       </Link>
                     )}

@@ -50,7 +50,7 @@ export default function SearchFilter({ categories }: SearchFilterProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
       {/* Search — 3/4 the width of the category dropdown */}
-      <div className="relative w-full sm:w-[180px]">
+      <div className="relative w-full sm:w-[300px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
         <input
           type="text"
@@ -76,7 +76,7 @@ export default function SearchFilter({ categories }: SearchFilterProps) {
           setCategory(e.target.value);
           updateUrl(search, e.target.value);
         }}
-        className={`${inputClass} py-2.5 px-4 w-full sm:w-[240px]`}
+        className={`${inputClass} py-2.5 px-4 w-full sm:w-[150px]`}
       >
         <option value="">All categories</option>
         {categories.map((cat) => (

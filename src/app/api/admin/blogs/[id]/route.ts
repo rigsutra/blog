@@ -47,9 +47,12 @@ export async function PUT(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    // If the blog is already published and this is an auto-save, write to draft
-    // fields only — don't touch the live content users can see.
-    if (_autosave && existing.status === "published") {
+    const wasPublished = existing.status === "published";
+
+    // Auto-save on a published blog → write to draft fields only.
+    // Live content (title/excerpt/content) stays untouched so readers never
+    // see half-finished edits.
+    if (_autosave && wasPublished) {
       const sanitizedDraft = sanitizeContent(content);
       const blog = await prisma.blog.update({
         where: { id: parseInt(id) },
@@ -64,12 +67,44 @@ export async function PUT(
       return NextResponse.json({ blog });
     }
 
+    // Manual publish of a published blog that has pending draft changes:
+    // promote the draft fields to live fields, then clear them.
+    const isPublishing = status === "published";
+    if (isPublishing && wasPublished && existing.hasDraft) {
+      const liveTitle   = existing.draftTitle   ?? title;
+      const liveExcerpt = existing.draftExcerpt ?? excerpt ?? "";
+      const liveContent = existing.draftContent ?? content;
+      const liveSanitized = sanitizeContent(liveContent);
+      const liveSlug = liveTitle !== existing.title
+        ? generateSlug(liveTitle)
+        : existing.slug;
+
+      const blog = await prisma.blog.update({
+        where: { id: parseInt(id) },
+        data: {
+          title: liveTitle,
+          slug: liveSlug,
+          excerpt: liveExcerpt,
+          content: liveSanitized,
+          readingTime: calculateReadingTime(liveSanitized),
+          coverImage: coverImage !== undefined ? coverImage || null : existing.coverImage,
+          categoryId: categoryId ? parseInt(categoryId) : null,
+          draftTitle: null,
+          draftExcerpt: null,
+          draftContent: null,
+          hasDraft: false,
+        },
+        include: { category: true },
+      });
+      return NextResponse.json({ blog });
+    }
+
+    // Normal save (draft blog, or first-time publish, or plain re-publish):
+    // update live fields directly, no draft handling needed.
     const sanitized = sanitizeContent(content);
     const readingTime = calculateReadingTime(sanitized);
-    const slug =
-      title !== existing.title ? generateSlug(title) : existing.slug;
+    const slug = title !== existing.title ? generateSlug(title) : existing.slug;
 
-    // Check slug uniqueness if changed
     if (slug !== existing.slug) {
       const slugExists = await prisma.blog.findFirst({
         where: { slug, id: { not: parseInt(id) } },
@@ -82,36 +117,18 @@ export async function PUT(
       }
     }
 
-    const wasPublished = existing.status === "published";
-    const isPublishing = status === "published";
-
-    // When publishing, merge draft content if it exists, then clear draft fields
-    const finalTitle = (wasPublished && existing.hasDraft && existing.draftTitle) ? existing.draftTitle : title;
-    const finalExcerpt = (wasPublished && existing.hasDraft && existing.draftExcerpt !== null) ? existing.draftExcerpt : (excerpt || "");
-    const finalContent = (wasPublished && existing.hasDraft && existing.draftContent) ? existing.draftContent : sanitized;
-    const finalSanitized = (wasPublished && existing.hasDraft && existing.draftContent)
-      ? existing.draftContent
-      : sanitized;
-    const finalReadingTime = calculateReadingTime(finalSanitized);
-    const finalSlug = finalTitle !== existing.title ? generateSlug(finalTitle) : existing.slug;
-
     const blog = await prisma.blog.update({
       where: { id: parseInt(id) },
       data: {
-        title: finalTitle,
-        slug: finalSlug,
-        excerpt: finalExcerpt,
-        content: finalContent,
+        title,
+        slug,
+        excerpt: excerpt || "",
+        content: sanitized,
         coverImage: coverImage !== undefined ? coverImage || null : existing.coverImage,
         categoryId: categoryId ? parseInt(categoryId) : null,
         status: status || existing.status,
-        readingTime: finalReadingTime,
+        readingTime,
         publishedAt: isPublishing && !wasPublished ? new Date() : existing.publishedAt,
-        // Clear draft fields once published
-        draftTitle: null,
-        draftExcerpt: null,
-        draftContent: null,
-        hasDraft: false,
       },
       include: { category: true },
     });
