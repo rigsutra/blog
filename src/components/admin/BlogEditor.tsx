@@ -56,6 +56,7 @@ export default function BlogEditor({ content, onChange, onImageUpload }: BlogEdi
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({ codeBlock: false, horizontalRule: false }),
       Underline,
@@ -101,7 +102,12 @@ export default function BlogEditor({ content, onChange, onImageUpload }: BlogEdi
     }
   }, [editor, onImageUpload]);
 
-  if (!editor) return null;
+  if (!editor) return (
+    <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 min-h-[400px] flex items-center justify-center bg-white dark:bg-gray-900">
+      <div className="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 border-t-blue-500 rounded-full animate-spin mr-2" />
+      <span className="text-sm text-gray-400 dark:text-gray-500">Initializing editor…</span>
+    </div>
+  );
 
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-900">

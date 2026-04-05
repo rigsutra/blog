@@ -7,14 +7,16 @@ async function main() {
   console.log("Seeding database...");
 
   // Create admin user
-  const passwordHash = await bcrypt.hash("admin123", 12);
+  const username = process.env.ADMIN_USERNAME ?? "admin";
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    throw new Error("ADMIN_PASSWORD must be set in your .env file");
+  }
+  const passwordHash = await bcrypt.hash(password, 12);
   const admin = await prisma.adminUser.upsert({
-    where: { username: "admin" },
+    where: { username },
     update: {},
-    create: {
-      username: "admin",
-      passwordHash,
-    },
+    create: { username, passwordHash },
   });
   console.log("Admin user created:", admin.username);
 
@@ -93,7 +95,6 @@ async function main() {
   console.log("Sample blogs created:", sampleBlogs.length);
 
   console.log("\nSeeding complete!");
-  console.log("Admin credentials: username=admin, password=admin123");
 }
 
 main()
