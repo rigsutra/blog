@@ -1,0 +1,77 @@
+import type { Metadata } from "next";
+import { Feather, Pen, BookOpen, Heart } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "Learn more about this blog and its mission.",
+};
+
+export default function AboutPage() {
+  return (
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20">
+      {/* Hero */}
+      <div className="text-center mb-16">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mb-6">
+          <Feather className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+        </div>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
+          About This Blog
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
+          A space for thoughtful writing on technology, design, and ideas that matter.
+        </p>
+      </div>
+
+      {/* Story */}
+      <div className="mb-16 space-y-5">
+        <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+          This blog was created with a simple mission: to share ideas worth
+          thinking about, in a format that respects the reader&apos;s time and
+          attention.
+        </p>
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+          In a world full of noise, we believe in writing that is clear,
+          considered, and genuinely useful. Every article here is written with
+          care — no clickbait, no filler, just honest exploration of ideas.
+        </p>
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+          Whether you&apos;re here for insights on software development, design
+          thinking, or the intersection of technology and human experience —
+          welcome. We&apos;re glad you&apos;re here.
+        </p>
+      </div>
+
+      {/* Values */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          {
+            icon: Pen,
+            title: "Quality Writing",
+            desc: "Every post is crafted with care to deliver real value and insight.",
+          },
+          {
+            icon: BookOpen,
+            title: "Deep Dives",
+            desc: "We go beyond surface level to explore topics with depth and nuance.",
+          },
+          {
+            icon: Heart,
+            title: "Reader First",
+            desc: "No ads, no tracking. Just clean reading focused on your experience.",
+          },
+        ].map(({ icon: Icon, title, desc }) => (
+          <div
+            key={title}
+            className="p-6 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800"
+          >
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950/50 rounded-xl flex items-center justify-center mb-4">
+              <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("admin_users")
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  slug  String @unique
+  blogs Blog[]
+
+  @@map("categories")
+}
+
+model Blog {
+  id          Int       @id @default(autoincrement())
+  title       String
+  slug        String    @unique
+  excerpt     String
+  content     String
+  coverImage  String?   @map("cover_image")
+  status      String    @default("draft")
+  readingTime Int       @default(1) @map("reading_time")
+  categoryId  Int?      @map("category_id")
+  category    Category? @relation(fields: [categoryId], references: [id])
+  draftTitle   String?   @map("draft_title")
+  draftExcerpt String?   @map("draft_excerpt")
+  draftContent String?   @map("draft_content")
+  hasDraft     Boolean   @default(false) @map("has_draft")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  publishedAt  DateTime? @map("published_at")
+
+  @@map("blogs")
+}
