@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "prisma db push && prisma generate && next dev",
-    "build": "prisma db push && prisma generate && next build",
-    "start": "prisma db push && prisma generate && next start",
+    "dev": "prisma db push && prisma generate && npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/ensure-admin.ts && next dev",
+    "build": "prisma db push && prisma generate && npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/ensure-admin.ts && next build",
+    "start": "prisma db push && prisma generate && npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/ensure-admin.ts && next start",
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:seed": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
