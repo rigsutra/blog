@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "prisma db push --skip-generate && npx ts-node --project tsconfig.node.json prisma/ensure-admin.ts && next dev",
-    "build": "prisma db push --skip-generate && npx ts-node --project tsconfig.node.json prisma/ensure-admin.ts && next build",
-    "start": "prisma db push --skip-generate && npx ts-node --project tsconfig.node.json prisma/ensure-admin.ts && next start",
+    "build": "prisma generate && next build",
+    "start": "next start -p 3010",
+    "prod:prepare": "prisma db push --skip-generate && npx ts-node --project tsconfig.node.json prisma/ensure-admin.ts",
+    "deploy": "npm run prod:prepare && npm run build",
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:seed": "npx ts-node --project tsconfig.node.json prisma/seed.ts",
