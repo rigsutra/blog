@@ -3,7 +3,7 @@ import { Feather, Pen, BookOpen, Heart } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn more about this blog and its mission.",
+  description: "Learn more about Ashish and the ideas behind this blog.",
 };
 
 export default function AboutPage() {
@@ -15,29 +15,23 @@ export default function AboutPage() {
           <Feather className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
-          About This Blog
+          About Me
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
-          A space for thoughtful writing on technology, design, and ideas that matter.
+          Hi, I’m Ashish — a software engineer sharing thoughts on technology, life, and everything in between.
         </p>
       </div>
 
       {/* Story */}
       <div className="mb-16 space-y-5">
-        <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
-          This blog was created with a simple mission: to share ideas worth
-          thinking about, in a format that respects the reader&apos;s time and
-          attention.
+        <p className=" text-gray-600 dark:text-gray-400 leading-relaxed">
+          This blog is my personal space to share ideas, experiences, and lessons I pick up along the way.
         </p>
         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-          In a world full of noise, we believe in writing that is clear,
-          considered, and genuinely useful. Every article here is written with
-          care — no clickbait, no filler, just honest exploration of ideas.
+          I mostly write about technology and programming, but you’ll also find thoughts on lifestyle, personal growth, and occasional glimpses into my life.
         </p>
         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-          Whether you&apos;re here for insights on software development, design
-          thinking, or the intersection of technology and human experience —
-          welcome. We&apos;re glad you&apos;re here.
+          The goal is simple — to keep things honest, useful, and worth your time. No noise, just meaningful content and real perspectives.
         </p>
       </div>
 
@@ -46,18 +40,18 @@ export default function AboutPage() {
         {[
           {
             icon: Pen,
-            title: "Quality Writing",
-            desc: "Every post is crafted with care to deliver real value and insight.",
+            title: "Real Thoughts",
+            desc: "Sharing genuine ideas, experiences, and perspectives without the fluff.",
           },
           {
             icon: BookOpen,
-            title: "Deep Dives",
-            desc: "We go beyond surface level to explore topics with depth and nuance.",
+            title: "Learning Journey",
+            desc: "Documenting what I learn in tech, life, and everything in between.",
           },
           {
             icon: Heart,
-            title: "Reader First",
-            desc: "No ads, no tracking. Just clean reading focused on your experience.",
+            title: "Simple & Honest",
+            desc: "Clean writing focused on clarity, usefulness, and authenticity.",
           },
         ].map(({ icon: Icon, title, desc }) => (
           <div
@@ -67,8 +61,12 @@ export default function AboutPage() {
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950/50 rounded-xl flex items-center justify-center mb-4">
               <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{desc}</p>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              {title}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+              {desc}
+            </p>
           </div>
         ))}
       </div>

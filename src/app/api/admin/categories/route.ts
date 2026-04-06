@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { generateSlug } from "@/lib/utils";
 
@@ -36,6 +37,9 @@ export async function POST(request: NextRequest) {
     const category = await prisma.category.create({
       data: { name: name.trim(), slug },
     });
+
+    revalidatePath("/");
+
     return NextResponse.json({ category }, { status: 201 });
   } catch (error) {
     console.error("Error creating category:", error);
