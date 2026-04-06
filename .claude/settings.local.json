@@ -11,7 +11,8 @@
       "Bash(ls -la /c/projects/Blog/prisma/*.db)",
       "Bash(sqlite3 /c/projects/Blog/prisma/dev.db \".tables\")",
       "Bash(node -e 'const {PrismaClient}=require\\('\\\\''@prisma/client'\\\\''\\);const p=new PrismaClient\\(\\);p.blog.count\\(\\).then\\(n=>console.log\\('\\\\''blogs:'\\\\'',n\\)\\).then\\(\\(\\)=>p.adminUser.count\\(\\)\\).then\\(n=>console.log\\('\\\\''admins:'\\\\'',n\\)\\).then\\(\\(\\)=>p.category.count\\(\\)\\).then\\(n=>console.log\\('\\\\''categories:'\\\\'',n\\)\\).finally\\(\\(\\)=>p.$disconnect\\(\\)\\)')",
-      "Bash(node -e 'const {PrismaClient} = require\\('\\\\''@prisma/client'\\\\''\\); const p = new PrismaClient\\(\\); p.blog.findFirst\\(\\).then\\(b => { console.log\\(Object.keys\\(b\\)\\); p.$disconnect\\(\\); }\\).catch\\(e => { console.error\\(e.message\\); p.$disconnect\\(\\); }\\);')"
+      "Bash(node -e 'const {PrismaClient} = require\\('\\\\''@prisma/client'\\\\''\\); const p = new PrismaClient\\(\\); p.blog.findFirst\\(\\).then\\(b => { console.log\\(Object.keys\\(b\\)\\); p.$disconnect\\(\\); }\\).catch\\(e => { console.error\\(e.message\\); p.$disconnect\\(\\); }\\);')",
+      "Bash(xargs grep:*)"
     ]
   }
 }

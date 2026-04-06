@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { generateSlug, calculateReadingTime, sanitizeContent } from "@/lib/utils";
 
@@ -96,6 +97,8 @@ export async function PUT(
         },
         include: { category: true },
       });
+      revalidatePath(`/blog/${blog.slug}`);
+      revalidatePath("/");
       return NextResponse.json({ blog });
     }
 
@@ -133,6 +136,13 @@ export async function PUT(
       include: { category: true },
     });
 
+    if (blog.status === "published") {
+      revalidatePath(`/blog/${blog.slug}`);
+      // Also revalidate the old slug if it changed
+      if (slug !== existing.slug) revalidatePath(`/blog/${existing.slug}`);
+      revalidatePath("/");
+    }
+
     return NextResponse.json({ blog });
   } catch (error) {
     console.error("Error updating blog:", error);
@@ -146,7 +156,14 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    const existing = await prisma.blog.findUnique({ where: { id: parseInt(id) } });
     await prisma.blog.delete({ where: { id: parseInt(id) } });
+
+    if (existing?.status === "published") {
+      revalidatePath(`/blog/${existing.slug}`);
+      revalidatePath("/");
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting blog:", error);

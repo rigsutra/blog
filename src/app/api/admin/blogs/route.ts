@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { generateSlug, calculateReadingTime, sanitizeContent } from "@/lib/utils";
 
@@ -74,6 +75,11 @@ export async function POST(request: NextRequest) {
       },
       include: { category: true },
     });
+
+    if (blog.status === "published") {
+      revalidatePath(`/blog/${blog.slug}`);
+      revalidatePath("/");
+    }
 
     return NextResponse.json({ blog }, { status: 201 });
   } catch (error) {
