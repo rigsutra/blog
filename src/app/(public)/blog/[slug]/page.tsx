@@ -8,6 +8,8 @@ import { formatDate } from "@/lib/utils";
 import BlogCard from "@/components/public/BlogCard";
 import { Blog, Category } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -34,14 +36,6 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
       description: blog.excerpt,
     },
   };
-}
-
-export async function generateStaticParams() {
-  const blogs = await prisma.blog.findMany({
-    where: { status: "published" },
-    select: { slug: true },
-  });
-  return blogs.map((b) => ({ slug: b.slug }));
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {

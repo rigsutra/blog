@@ -51,8 +51,7 @@ export async function PUT(
     const wasPublished = existing.status === "published";
 
     // Auto-save on a published blog → write to draft fields only.
-    // Live content (title/excerpt/content) stays untouched so readers never
-    // see half-finished edits.
+    // Live content stays untouched so readers never see half-finished edits.
     if (_autosave && wasPublished) {
       const sanitizedDraft = sanitizeContent(content);
       const blog = await prisma.blog.update({
@@ -68,26 +67,35 @@ export async function PUT(
       return NextResponse.json({ blog });
     }
 
-    // Manual publish of a published blog that has pending draft changes:
-    // promote the draft fields to live fields, then clear them.
     const isPublishing = status === "published";
-    if (isPublishing && wasPublished && existing.hasDraft) {
-      const liveTitle   = existing.draftTitle   ?? title;
-      const liveExcerpt = existing.draftExcerpt ?? excerpt ?? "";
-      const liveContent = existing.draftContent ?? content;
-      const liveSanitized = sanitizeContent(liveContent);
-      const liveSlug = liveTitle !== existing.title
-        ? generateSlug(liveTitle)
-        : existing.slug;
+
+    // Re-publishing an already-published post: always use the current request
+    // body (the live editor state — more up-to-date than the last auto-save),
+    // clear any pending draft overlay, and revalidate the public page.
+    if (isPublishing && wasPublished) {
+      const sanitized = sanitizeContent(content);
+      const liveSlug = title !== existing.title ? generateSlug(title) : existing.slug;
+
+      if (liveSlug !== existing.slug) {
+        const slugExists = await prisma.blog.findFirst({
+          where: { slug: liveSlug, id: { not: parseInt(id) } },
+        });
+        if (slugExists) {
+          return NextResponse.json(
+            { error: "A blog with this title already exists" },
+            { status: 400 }
+          );
+        }
+      }
 
       const blog = await prisma.blog.update({
         where: { id: parseInt(id) },
         data: {
-          title: liveTitle,
+          title,
           slug: liveSlug,
-          excerpt: liveExcerpt,
-          content: liveSanitized,
-          readingTime: calculateReadingTime(liveSanitized),
+          excerpt: excerpt || "",
+          content: sanitized,
+          readingTime: calculateReadingTime(sanitized),
           coverImage: coverImage !== undefined ? coverImage || null : existing.coverImage,
           categoryId: categoryId ? parseInt(categoryId) : null,
           draftTitle: null,
@@ -97,13 +105,14 @@ export async function PUT(
         },
         include: { category: true },
       });
+
       revalidatePath(`/blog/${blog.slug}`);
+      if (liveSlug !== existing.slug) revalidatePath(`/blog/${existing.slug}`);
       revalidatePath("/");
       return NextResponse.json({ blog });
     }
 
-    // Normal save (draft blog, or first-time publish, or plain re-publish):
-    // update live fields directly, no draft handling needed.
+    // All other cases: draft→draft, draft→published (first publish).
     const sanitized = sanitizeContent(content);
     const readingTime = calculateReadingTime(sanitized);
     const slug = title !== existing.title ? generateSlug(title) : existing.slug;
@@ -132,13 +141,19 @@ export async function PUT(
         status: status || existing.status,
         readingTime,
         publishedAt: isPublishing && !wasPublished ? new Date() : existing.publishedAt,
+        // Clear any draft overlay when the record becomes (or stays) a plain draft
+        ...(status === "draft" && {
+          draftTitle: null,
+          draftExcerpt: null,
+          draftContent: null,
+          hasDraft: false,
+        }),
       },
       include: { category: true },
     });
 
     if (blog.status === "published") {
       revalidatePath(`/blog/${blog.slug}`);
-      // Also revalidate the old slug if it changed
       if (slug !== existing.slug) revalidatePath(`/blog/${existing.slug}`);
       revalidatePath("/");
     }

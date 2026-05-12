@@ -185,7 +185,12 @@ export default function BlogForm({ initialData }: BlogFormProps) {
 
   // ── Button click handlers ─────────────────────────────────────
   const handleSaveDraft = () => {
-    // Draft saves go immediately — no need to wait for images
+    if (form.status === "published") {
+      // For a live post "Save" means: persist changes to the draft overlay
+      // without touching what readers see — identical to auto-save.
+      autoSave();
+      return;
+    }
     executeSave("draft");
   };
 
@@ -286,14 +291,14 @@ export default function BlogForm({ initialData }: BlogFormProps) {
             <span className="hidden xs:inline">{preview ? "Edit" : "Preview"}</span>
           </button>
 
-          {/* Save Draft */}
+          {/* Save Draft / Save */}
           <button
             onClick={handleSaveDraft}
             disabled={saving}
             className="flex items-center gap-1.5 text-sm px-3 py-2 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>Save Draft</span>
+            <span>{form.status === "published" ? "Save" : "Save Draft"}</span>
           </button>
 
           {/* Publish — stays in loading until images are uploaded AND API call completes */}
