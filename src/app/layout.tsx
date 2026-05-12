@@ -7,6 +7,10 @@ export const metadata: Metadata = {
     default: process.env.NEXT_PUBLIC_SITE_NAME || "Ashish Blog's",
     template: `%s | ${process.env.NEXT_PUBLIC_SITE_NAME || "Ashish Blog's"}`,
   },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.svg",
+  },
   description:
     "My name is Ashish, and I'm a software Engineer and this website is to share by ideas thought it could be related to any topic but mostly about technology lifestyle and life itself some times about presonla life blogger sharing my thoughts, experiences, and insights on various topics. Welcome to my personal blog where I explore a wide range of subjects, from technology and programming to lifestyle and travel. Join me on this journey as I share my ideas, stories, and perspectives with the world.",
   openGraph: {
