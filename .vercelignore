@@ -1,0 +1,2 @@
+# Ignore local SQLite database (not used after migration)
+prisma/dev.db
